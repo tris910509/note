@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Kasir</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+    <title>Aplikasi Kasir Lengkap</title>
     <style>
-        .dark-mode {
-            background-color: #333;
-            color: #fff;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin: 20px 0;
         }
         table, th, td {
             border: 1px solid black;
@@ -21,166 +21,322 @@
             padding: 8px;
             text-align: left;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div id="loginSection" class="container mt-4">
-        <h2>Login</h2>
-        <input type="text" id="username" class="form-control my-2" placeholder="Username">
-        <input type="password" id="password" class="form-control my-2" placeholder="Password">
-        <button class="btn btn-primary" onclick="login(document.getElementById('username').value, document.getElementById('password').value)">Login</button>
+    <h1>Aplikasi Kasir</h1>
+    <div>
+        <button onclick="showSection('usersSection')">Kelola Pengguna</button>
+        <button onclick="showSection('categoriesSection')">Kelola Kategori</button>
+        <button onclick="showSection('suppliersSection')">Kelola Supplier</button>
+        <button onclick="showSection('productsSection')">Kelola Produk</button>
+        <button onclick="showSection('transactionsSection')">Kelola Transaksi</button>
+        <button onclick="showSection('reportsSection')">Lihat Laporan</button>
     </div>
 
-    <div id="adminSection" class="container mt-4" style="display:none;">
-        <h2>Admin Panel</h2>
-        <button class="btn btn-secondary mb-3" onclick="toggleTheme()">Ganti Tema</button>
-        <h3>Manajemen Produk</h3>
-        <form id="productForm">
-            <input type="text" id="productName" class="form-control my-2" placeholder="Nama Produk">
-            <input type="number" id="productPrice" class="form-control my-2" placeholder="Harga">
-            <input type="number" id="productStock" class="form-control my-2" placeholder="Stok">
-            <select id="productCategory" class="form-select my-2">
-                <option value="" disabled selected>Pilih Kategori</option>
-                <option value="Elektronik">Elektronik</option>
-                <option value="Makanan">Makanan</option>
-            </select>
-            <select id="productSupplier" class="form-select my-2">
-                <option value="" disabled selected>Pilih Supplier</option>
-                <option value="PT ABC">PT ABC</option>
-                <option value="PT XYZ">PT XYZ</option>
-            </select>
-            <button type="button" class="btn btn-success" onclick="addProduct()">Tambah Produk</button>
+    <!-- Pengguna Section -->
+    <div id="usersSection" class="hidden">
+        <h2>Kelola Pengguna</h2>
+        <form id="userForm">
+            <input type="text" id="username" placeholder="Nama Pengguna" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="button" onclick="addUser()">Tambah Pengguna</button>
         </form>
-        <h3>Daftar Produk</h3>
-        <div id="productList"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama Pengguna</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="userTable"></tbody>
+        </table>
     </div>
 
-    <div id="kasirSection" class="container mt-4" style="display:none;">
-        <h2>Kasir Panel</h2>
-        <button class="btn btn-secondary mb-3" onclick="toggleTheme()">Ganti Tema</button>
-        <h3>Transaksi</h3>
-        <form>
-            <select id="transactionProduct" class="form-select my-2">
+    <!-- Kategori Section -->
+    <div id="categoriesSection" class="hidden">
+        <h2>Kelola Kategori</h2>
+        <form id="categoryForm">
+            <input type="text" id="categoryName" placeholder="Nama Kategori" required>
+            <button type="button" onclick="addCategory()">Tambah Kategori</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama Kategori</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="categoryTable"></tbody>
+        </table>
+    </div>
+
+    <!-- Supplier Section -->
+    <div id="suppliersSection" class="hidden">
+        <h2>Kelola Supplier</h2>
+        <form id="supplierForm">
+            <input type="text" id="supplierName" placeholder="Nama Supplier" required>
+            <input type="text" id="supplierCompany" placeholder="Nama Perusahaan" required>
+            <input type="text" id="supplierPhone" placeholder="No. Telepon" required>
+            <input type="text" id="supplierAddress" placeholder="Alamat" required>
+            <button type="button" onclick="addSupplier()">Tambah Supplier</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama Supplier</th>
+                    <th>Perusahaan</th>
+                    <th>No. Telepon</th>
+                    <th>Alamat</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="supplierTable"></tbody>
+        </table>
+    </div>
+
+    <!-- Produk Section -->
+    <div id="productsSection" class="hidden">
+        <h2>Kelola Produk</h2>
+        <form id="productForm">
+            <input type="text" id="productName" placeholder="Nama Produk" required>
+            <input type="number" id="productPrice" placeholder="Harga" required>
+            <input type="number" id="productStock" placeholder="Stok" required>
+            <select id="productCategory" required>
+                <option value="" disabled selected>Pilih Kategori</option>
+            </select>
+            <select id="productSupplier" required>
+                <option value="" disabled selected>Pilih Supplier</option>
+            </select>
+            <button type="button" onclick="addProduct()">Tambah Produk</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama Produk</th>
+                    <th>Harga</th>
+                    <th>Stok</th>
+                    <th>Kategori</th>
+                    <th>Supplier</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="productTable"></tbody>
+        </table>
+    </div>
+
+    <!-- Transaksi Section -->
+    <div id="transactionsSection" class="hidden">
+        <h2>Kelola Transaksi</h2>
+        <form id="transactionForm">
+            <select id="transactionProduct" required>
                 <option value="" disabled selected>Pilih Produk</option>
             </select>
-            <input type="number" id="transactionQuantity" class="form-control my-2" placeholder="Jumlah">
-            <select id="paymentMethod" class="form-select my-2">
-                <option value="" disabled selected>Pilih Metode Pembayaran</option>
-                <option value="cash">Cash</option>
-                <option value="transfer">Transfer</option>
-                <option value="qr">QR</option>
+            <input type="number" id="transactionQuantity" placeholder="Jumlah" required>
+            <select id="transactionPaymentMethod" required>
+                <option value="" disabled selected>Metode Pembayaran</option>
+                <option value="Cash">Cash</option>
+                <option value="Transfer">Transfer</option>
             </select>
-            <button type="button" class="btn btn-primary" onclick="addTransaction()">Tambah Transaksi</button>
+            <button type="button" onclick="addTransaction()">Tambah Transaksi</button>
         </form>
-        <h3>Daftar Transaksi</h3>
-        <div id="transactionList"></div>
-        <h4 id="totalRevenue">Total Pendapatan: Rp0.00</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Produk</th>
+                    <th>Jumlah</th>
+                    <th>Total</th>
+                    <th>Metode Pembayaran</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="transactionTable"></tbody>
+        </table>
     </div>
 
-    <div id="transactionHistory" class="container mt-4">
-        <h2>Histori Transaksi</h2>
-        <button class="btn btn-info" onclick="exportTransactionsToCSV()">Export Laporan</button>
-        <div id="reportList"></div>
+    <!-- Laporan Section -->
+    <div id="reportsSection" class="hidden">
+        <h2>Laporan</h2>
+        <button onclick="exportReport()">Export Laporan</button>
+        <div id="reportContent"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode"></script>
     <script>
-        let currentUser = null;
-
-        const dataStore = {
+        const data = {
+            users: [],
+            categories: [],
+            suppliers: [],
             products: [],
-            transactions: [],
+            transactions: []
         };
-
-        const users = [
-            { username: 'admin', password: 'admin123', role: 'admin' },
-            { username: 'kasir', password: 'kasir123', role: 'kasir' }
-        ];
 
         function generateId(prefix) {
             return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
         }
 
-        function login(username, password) {
-            const user = users.find(u => u.username === username && u.password === password);
-            if (user) {
-                currentUser = user;
-                alert(`Selamat datang, ${user.username}!`);
-                configureUIForRole(user.role);
-            } else {
-                alert('Username atau password salah!');
-            }
+        function showSection(sectionId) {
+            document.querySelectorAll('div[id$="Section"]').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
         }
 
-        function configureUIForRole(role) {
-            document.getElementById('loginSection').style.display = 'none';
-            if (role === 'admin') {
-                document.getElementById('adminSection').style.display = 'block';
-                document.getElementById('kasirSection').style.display = 'none';
-            } else if (role === 'kasir') {
-                document.getElementById('adminSection').style.display = 'none';
-                document.getElementById('kasirSection').style.display = 'block';
-            }
+        function renderTable(dataArray, tableId, rowCallback) {
+            const tableBody = document.getElementById(tableId);
+            tableBody.innerHTML = dataArray.map(rowCallback).join('');
         }
 
+        // Add user
+        function addUser() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            if (!username || !password) return alert('Semua field wajib diisi!');
+            data.users.push({ id: generateId('USER'), username, password });
+            renderTable(data.users, 'userTable', user =>
+                `<tr><td>${user.id}</td><td>${user.username}</td><td><button onclick="deleteUser('${user.id}')">Hapus</button></td></tr>`);
+        }
+
+        function deleteUser(userId) {
+            data.users = data.users.filter(user => user.id !== userId);
+            renderTable(data.users, 'userTable', user =>
+                `<tr><td>${user.id}</td><td>${user.username}</td><td><button onclick="deleteUser('${user.id}')">Hapus</button></td></tr>`);
+        }
+
+        // Add category
+        function addCategory() {
+            const categoryName = document.getElementById('categoryName').value.trim();
+            if (!categoryName) return alert('Nama kategori wajib diisi!');
+            data.categories.push({ id: generateId('CAT'), name: categoryName });
+            renderTable(data.categories, 'categoryTable', category =>
+                `<tr><td>${category.id}</td><td>${category.name}</td><td><button onclick="deleteCategory('${category.id}')">Hapus</button></td></tr>`);
+            updateCategoryDropdown();
+        }
+
+        function deleteCategory(categoryId) {
+            data.categories = data.categories.filter(category => category.id !== categoryId);
+            renderTable(data.categories, 'categoryTable', category =>
+                `<tr><td>${category.id}</td><td>${category.name}</td><td><button onclick="deleteCategory('${category.id}')">Hapus</button></td></tr>`);
+            updateCategoryDropdown();
+        }
+
+        // Add supplier
+        function addSupplier() {
+            const supplierName = document.getElementById('supplierName').value.trim();
+            const supplierCompany = document.getElementById('supplierCompany').value.trim();
+            const supplierPhone = document.getElementById('supplierPhone').value.trim();
+            const supplierAddress = document.getElementById('supplierAddress').value.trim();
+            if (!supplierName || !supplierCompany || !supplierPhone || !supplierAddress)
+                return alert('Semua field wajib diisi!');
+            data.suppliers.push({ id: generateId('SUP'), name: supplierName, company: supplierCompany, phone: supplierPhone, address: supplierAddress });
+            renderTable(data.suppliers, 'supplierTable', supplier =>
+                `<tr><td>${supplier.id}</td><td>${supplier.name}</td><td>${supplier.company}</td><td>${supplier.phone}</td><td>${supplier.address}</td><td><button onclick="deleteSupplier('${supplier.id}')">Hapus</button></td></tr>`);
+            updateSupplierDropdown();
+        }
+
+        function deleteSupplier(supplierId) {
+            data.suppliers = data.suppliers.filter(supplier => supplier.id !== supplierId);
+            renderTable(data.suppliers, 'supplierTable', supplier =>
+                `<tr><td>${supplier.id}</td><td>${supplier.name}</td><td>${supplier.company}</td><td>${supplier.phone}</td><td>${supplier.address}</td><td><button onclick="deleteSupplier('${supplier.id}')">Hapus</button></td></tr>`);
+            updateSupplierDropdown();
+        }
+
+        // Update dropdowns
+        function updateCategoryDropdown() {
+            const categorySelect = document.getElementById('productCategory');
+            categorySelect.innerHTML = '<option value="" disabled selected>Pilih Kategori</option>' + data.categories.map(category =>
+                `<option value="${category.id}">${category.name}</option>`).join('');
+        }
+
+        function updateSupplierDropdown() {
+            const supplierSelect = document.getElementById('productSupplier');
+            supplierSelect.innerHTML = '<option value="" disabled selected>Pilih Supplier</option>' + data.suppliers.map(supplier =>
+                `<option value="${supplier.id}">${supplier.name}</option>`).join('');
+        }
+
+        function updateProductDropdown() {
+            const productSelect = document.getElementById('transactionProduct');
+            productSelect.innerHTML = '<option value="" disabled selected>Pilih Produk</option>' + data.products.map(product =>
+                `<option value="${product.id}">${product.name}</option>`).join('');
+        }
+
+        // Add product
         function addProduct() {
-            const name = document.getElementById('productName').value.trim();
-            const price = parseFloat(document.getElementById('productPrice').value);
-            const stock = parseInt(document.getElementById('productStock').value);
-            const category = document.getElementById('productCategory').value;
-            const supplier = document.getElementById('productSupplier').value;
-
-            if (!name || !price || !stock || !category || !supplier) {
-                alert('Semua field wajib diisi!');
-                return;
-            }
-
-            if (price <= 0 || stock < 0) {
-                alert('Harga dan stok harus lebih besar dari 0!');
-                return;
-            }
-
-            dataStore.products.push({ id: generateId('PROD'), name, price, stock, category, supplier });
-            displayProducts();
+            const productName = document.getElementById('productName').value.trim();
+            const productPrice = parseFloat(document.getElementById('productPrice').value);
+            const productStock = parseInt(document.getElementById('productStock').value);
+            const productCategory = document.getElementById('productCategory').value;
+            const productSupplier = document.getElementById('productSupplier').value;
+            if (!productName || isNaN(productPrice) || isNaN(productStock) || !productCategory || !productSupplier)
+                return alert('Semua field wajib diisi!');
+            data.products.push({
+                id: generateId('PROD'),
+                name: productName,
+                price: productPrice,
+                stock: productStock,
+                categoryId: productCategory,
+                supplierId: productSupplier
+            });
+            renderTable(data.products, 'productTable', product =>
+                `<tr><td>${product.id}</td><td>${product.name}</td><td>${product.price}</td><td>${product.stock}</td><td>${product.categoryId}</td><td>${product.supplierId}</td><td><button onclick="deleteProduct('${product.id}')">Hapus</button></td></tr>`);
+            updateProductDropdown();
         }
 
-        function displayProducts() {
-            document.getElementById('productList').innerHTML = dataStore.products.map(prod =>
-                `<div>${prod.name} - Rp${prod.price} (Stok: ${prod.stock}, Kategori: ${prod.category}, Supplier: ${prod.supplier})</div>`).join('');
+        function deleteProduct(productId) {
+            data.products = data.products.filter(product => product.id !== productId);
+            renderTable(data.products, 'productTable', product =>
+                `<tr><td>${product.id}</td><td>${product.name}</td><td>${product.price}</td><td>${product.stock}</td><td>${product.categoryId}</td><td>${product.supplierId}</td><td><button onclick="deleteProduct('${product.id}')">Hapus</button></td></tr>`);
+            updateProductDropdown();
         }
 
+        // Add transaction
         function addTransaction() {
-            const productId = document.getElementById('transactionProduct').value;
-            const quantity = parseInt(document.getElementById('transactionQuantity').value);
-            const paymentMethod = document.getElementById('paymentMethod').value;
-
-            const product = dataStore.products.find(p => p.id === productId);
-            if (!product || product.stock < quantity) return alert('Produk tidak mencukupi!');
-
-            const total = product.price * quantity;
-            dataStore.transactions.push({ id: generateId('TRAN'), productId, quantity, total, paymentMethod, status: 'Belum Lunas' });
-            product.stock -= quantity;
-            displayTransactions();
+            const transactionProduct = document.getElementById('transactionProduct').value;
+            const transactionQuantity = parseInt(document.getElementById('transactionQuantity').value);
+            const transactionPaymentMethod = document.getElementById('transactionPaymentMethod').value;
+            if (!transactionProduct || isNaN(transactionQuantity) || !transactionPaymentMethod)
+                return alert('Semua field wajib diisi!');
+            const product = data.products.find(p => p.id === transactionProduct);
+            if (!product || product.stock < transactionQuantity)
+                return alert('Stok tidak mencukupi!');
+            const total = product.price * transactionQuantity;
+            product.stock -= transactionQuantity;
+            data.transactions.push({
+                id: generateId('TRAN'),
+                productId: transactionProduct,
+                quantity: transactionQuantity,
+                total,
+                paymentMethod: transactionPaymentMethod,
+                status: 'Lunas'
+            });
+            renderTable(data.transactions, 'transactionTable', transaction =>
+                `<tr><td>${transaction.id}</td><td>${transaction.productId}</td><td>${transaction.quantity}</td><td>${transaction.total}</td><td>${transaction.paymentMethod}</td><td>${transaction.status}</td><td><button onclick="deleteTransaction('${transaction.id}')">Hapus</button></td></tr>`);
         }
 
-        function displayTransactions() {
-            document.getElementById('transactionList').innerHTML = dataStore.transactions.map(tran =>
-                `<div>${tran.id} - ${tran.productId} (Qty: ${tran.quantity}, Total: Rp${tran.total.toFixed(2)}, Status: ${tran.status})</div>`).join('');
+        function deleteTransaction(transactionId) {
+            data.transactions = data.transactions.filter(transaction => transaction.id !== transactionId);
+            renderTable(data.transactions, 'transactionTable', transaction =>
+                `<tr><td>${transaction.id}</td><td>${transaction.productId}</td><td>${transaction.quantity}</td><td>${transaction.total}</td><td>${transaction.paymentMethod}</td><td>${transaction.status}</td><td><button onclick="deleteTransaction('${transaction.id}')">Hapus</button></td></tr>`);
         }
 
-        function exportTransactionsToCSV() {
-            const csvContent = dataStore.transactions.map(tran => `${tran.id},${tran.productId},${tran.quantity},${tran.total},${tran.paymentMethod},${tran.status}`).join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'transactions.csv';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
+        // Export report
+        function exportReport() {
+            const reportContent = data.transactions.map(transaction =>
+                `${transaction.id},${transaction.productId},${transaction.quantity},${transaction.total},${transaction.paymentMethod},${transaction.status}`).join('\n');
+            const blob = new Blob([reportContent], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'transactions.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
         }
     </script>
 </body>

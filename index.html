@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Kasir</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .section { display: none; }
+        .d-none { display: none; }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Aplikasi Kasir</h1>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <button class="list-group-item list-group-item-action" onclick="showSection('users')">Pengguna</button>
+                <button class="list-group-item list-group-item-action" onclick="showSection('categories')">Kategori</button>
+                <button class="list-group-item list-group-item-action" onclick="showSection('suppliers')">Supplier</button>
+                <button class="list-group-item list-group-item-action" onclick="showSection('products')">Produk</button>
+                <button class="list-group-item list-group-item-action" onclick="showSection('transactions')">Transaksi</button>
+                <button class="list-group-item list-group-item-action" onclick="showSection('reports')">Laporan</button>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <!-- Pengguna -->
+            <div id="users" class="section">
+                <h3>Pengguna</h3>
+                <form id="userForm" class="mb-3">
+                    <input type="text" id="userName" class="form-control mb-2" placeholder="Nama Pengguna">
+                    <input type="email" id="userEmail" class="form-control mb-2" placeholder="Email Pengguna">
+                    <button type="button" class="btn btn-primary" onclick="addUser()">Tambah Pengguna</button>
+                </form>
+                <div id="userList"></div>
+            </div>
+
+            <!-- Kategori -->
+            <div id="categories" class="section">
+                <h3>Kategori</h3>
+                <form id="categoryForm" class="mb-3">
+                    <input type="text" id="categoryName" class="form-control mb-2" placeholder="Nama Kategori">
+                    <button type="button" class="btn btn-primary" onclick="addCategory()">Tambah Kategori</button>
+                </form>
+                <div id="categoryList"></div>
+            </div>
+
+            <!-- Supplier -->
+            <div id="suppliers" class="section">
+                <h3>Supplier</h3>
+                <form id="supplierForm" class="mb-3">
+                    <input type="text" id="supplierName" class="form-control mb-2" placeholder="Nama Supplier">
+                    <input type="text" id="supplierCompany" class="form-control mb-2" placeholder="Nama Perusahaan">
+                    <input type="text" id="supplierPhone" class="form-control mb-2" placeholder="No. Handphone">
+                    <input type="text" id="supplierAddress" class="form-control mb-2" placeholder="Alamat Supplier">
+                    <button type="button" class="btn btn-primary" onclick="addSupplier()">Tambah Supplier</button>
+                </form>
+                <div id="supplierList"></div>
+            </div>
+
+            <!-- Produk -->
+            <div id="products" class="section">
+                <h3>Produk</h3>
+                <form id="productForm" class="mb-3">
+                    <input type="text" id="productName" class="form-control mb-2" placeholder="Nama Produk">
+                    <input type="number" id="productPrice" class="form-control mb-2" placeholder="Harga">
+                    <input type="number" id="productStock" class="form-control mb-2" placeholder="Stok">
+                    <select id="productCategory" class="form-control mb-2"></select>
+                    <select id="productSupplier" class="form-control mb-2"></select>
+                    <button type="button" class="btn btn-primary" onclick="addProduct()">Tambah Produk</button>
+                </form>
+                <div id="productList"></div>
+            </div>
+
+            <!-- Transaksi -->
+            <div id="transactions" class="section">
+                <h3>Transaksi</h3>
+                <form id="transactionForm" class="mb-3">
+                    <select id="transactionProduct" class="form-control mb-2"></select>
+                    <input type="number" id="transactionQuantity" class="form-control mb-2" placeholder="Jumlah">
+                    <select id="paymentMethod" class="form-control mb-2">
+                        <option value="cash">Cash</option>
+                        <option value="transfer">Transfer</option>
+                        <option value="qr">QR</option>
+                    </select>
+                    <button type="button" class="btn btn-primary" onclick="addTransaction()">Tambah Transaksi</button>
+                </form>
+                <div id="transactionList"></div>
+            </div>
+
+            <!-- Laporan -->
+            <div id="reports" class="section">
+                <h3>Laporan</h3>
+                <select id="reportFilter" class="form-control mb-3">
+                    <option value="all">Semua Transaksi</option>
+                    <option value="category">Berdasarkan Kategori</option>
+                    <option value="supplier">Berdasarkan Supplier</option>
+                    <option value="product">Berdasarkan Produk</option>
+                </select>
+                <div id="reportList"></div>
+                <h5 id="totalRevenue" class="mt-3"></h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data store
+    const dataStore = { users: [], categories: [], suppliers: [], products: [], transactions: [] };
+
+    // Helper function to generate ID
+    function generateId(prefix) {
+        return `${prefix}-${Date.now()}`;
+    }
+
+    // Display sections
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
+        document.getElementById(sectionId).style.display = 'block';
+        if (sectionId === 'products') populateProductForm();
+        if (sectionId === 'transactions') populateTransactionProducts();
+    }
+
+    // Pengguna
+    function addUser() {
+        const name = document.getElementById('userName').value.trim();
+        const email = document.getElementById('userEmail').value.trim();
+        if (!name || !email) return alert('Nama dan Email wajib diisi!');
+        dataStore.users.push({ id: generateId('USER'), name, email });
+        displayUsers();
+        document.getElementById('userForm').reset();
+    }
+    function displayUsers() {
+        document.getElementById('userList').innerHTML = dataStore.users.map(user =>
+            `<div>${user.id} - ${user.name} (${user.email})</div>`).join('');
+    }
+
+    // Kategori
+    function addCategory() {
+        const name = document.getElementById('categoryName').value.trim();
+        if (!name) return alert('Nama Kategori wajib diisi!');
+        dataStore.categories.push({ id: generateId('CAT'), name });
+        displayCategories();
+        document.getElementById('categoryForm').reset();
+    }
+    function displayCategories() {
+        document.getElementById('categoryList').innerHTML = dataStore.categories.map(cat =>
+            `<div>${cat.id} - ${cat.name}</div>`).join('');
+    }
+
+    // Supplier
+    function addSupplier() {
+        const name = document.getElementById('supplierName').value.trim();
+        const company = document.getElementById('supplierCompany').value.trim();
+        const phone = document.getElementById('supplierPhone').value.trim();
+        const address = document.getElementById('supplierAddress').value.trim();
+        if (!name || !company || !phone || !address) return alert('Semua field wajib diisi!');
+        dataStore.suppliers.push({ id: generateId('SUP'), name, company, phone, address });
+        displaySuppliers();
+        document.getElementById('supplierForm').reset();
+    }
+    function displaySuppliers() {
+        document.getElementById('supplierList').innerHTML = dataStore.suppliers.map(sup =>
+            `<div>${sup.id} - ${sup.name} (${sup.company})</div>`).join('');
+    }
+
+    // Produk
+    function addProduct() {
+        const name = document.getElementById('productName').value.trim();
+        const price = parseFloat(document.getElementById('productPrice').value);
+        const stock = parseInt(document.getElementById('productStock').value);
+        const category = document.getElementById('productCategory').value;
+        const supplier = document.getElementById('productSupplier').value;
+        if (!name || !price || !stock || !category || !supplier) return alert('Semua field wajib diisi!');
+        dataStore.products.push({ id: generateId('PROD'), name, price, stock, category, supplier });
+        displayProducts();
+        document.getElementById('productForm').reset();
+    }
+    function displayProducts() {
+        document.getElementById('productList').innerHTML = dataStore.products.map(prod =>
+            `<div>${prod.id} - ${prod.name} (Rp${prod.price}) | Stok: ${prod.stock}</div>`).join('');
+    }
+    function populateProductForm() {
+        const categorySelect = document.getElementById('productCategory');
+        const supplierSelect = document.getElementById('productSupplier');
+        categorySelect.innerHTML = '<option value="" disabled selected>Pilih Kategori</option>';
+        supplierSelect.innerHTML = '<option value="" disabled selected>Pilih Supplier</option>';
+        dataStore.categories.forEach(cat => categorySelect

@@ -105,3 +105,146 @@
     </div>
 </div>
 
+<script>
+    // Data store
+    const dataStore = { users: [], categories: [], suppliers: [], products: [], transactions: [] };
+
+    // Helper function to generate ID
+    function generateId(prefix) {
+        return `${prefix}-${Date.now()}`;
+    }
+
+    // Display sections
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
+        document.getElementById(sectionId).style.display = 'block';
+        if (sectionId === 'products') populateProductForm();
+        if (sectionId === 'transactions') populateTransactionProducts();
+    }
+
+    // Pengguna
+    function addUser() {
+        const name = document.getElementById('userName').value.trim();
+        const email = document.getElementById('userEmail').value.trim();
+        if (!name || !email) return alert('Nama dan Email wajib diisi!');
+        dataStore.users.push({ id: generateId('USER'), name, email });
+        displayUsers();
+        document.getElementById('userForm').reset();
+    }
+    function displayUsers() {
+        document.getElementById('userList').innerHTML = dataStore.users.map(user =>
+            `<div>${user.id} - ${user.name} (${user.email})</div>`).join('');
+    }
+
+    // Kategori
+    function addCategory() {
+        const name = document.getElementById('categoryName').value.trim();
+        if (!name) return alert('Nama Kategori wajib diisi!');
+        dataStore.categories.push({ id: generateId('CAT'), name });
+        displayCategories();
+        document.getElementById('categoryForm').reset();
+    }
+    function displayCategories() {
+        document.getElementById('categoryList').innerHTML = dataStore.categories.map(cat =>
+            `<div>${cat.id} - ${cat.name}</div>`).join('');
+    }
+
+    // Supplier
+    function addSupplier() {
+        const name = document.getElementById('supplierName').value.trim();
+        const company = document.getElementById('supplierCompany').value.trim();
+        const phone = document.getElementById('supplierPhone').value.trim();
+        const address = document.getElementById('supplierAddress').value.trim();
+        if (!name || !company || !phone || !address) return alert('Semua field wajib diisi!');
+        dataStore.suppliers.push({ id: generateId('SUP'), name, company, phone, address });
+        displaySuppliers();
+        document.getElementById('supplierForm').reset();
+    }
+    function displaySuppliers() {
+        document.getElementById('supplierList').innerHTML = dataStore.suppliers.map(sup =>
+            `<div>${sup.id} - ${sup.name} (${sup.company})</div>`).join('');
+    }
+
+    // Produk
+    function addProduct() {
+        const name = document.getElementById('productName').value.trim();
+        const price = parseFloat(document.getElementById('productPrice').value);
+        const stock = parseInt(document.getElementById('productStock').value);
+        const category = document.getElementById('productCategory').value;
+        const supplier = document.getElementById('productSupplier').value;
+        if (!name || !price || !stock || !category || !supplier) return alert('Semua field wajib diisi!');
+        dataStore.products.push({ id: generateId('PROD'), name, price, stock, category, supplier });
+        displayProducts();
+        document.getElementById('productForm').reset();
+    }
+    function displayProducts() {
+        document.getElementById('productList').innerHTML = dataStore.products.map(prod =>
+            `<div>${prod.id} - ${prod.name} (Rp${prod.price}) | Stok: ${prod.stock}</div>`).join('');
+    }
+    function populateProductForm() {
+        const categorySelect = document.getElementById('productCategory');
+        const supplierSelect = document.getElementById('productSupplier');
+        categorySelect.innerHTML = '<option value="" disabled selected>Pilih Kategori</option>';
+        supplierSelect.innerHTML = '<option value="" disabled selected>Pilih Supplier</option>';
+        dataStore.categories.forEach(cat => categorySelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`);
+        dataStore.suppliers.forEach(sup => supplierSelect.innerHTML += `<option value="${sup.id}">${sup.name}</option>`);
+    }
+
+    // Transaksi
+    function addTransaction() {
+        const productId = document.getElementById('transactionProduct').value;
+        const quantity = parseInt(document.getElementById('transactionQuantity').value);
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        if (!productId || !quantity || !paymentMethod) return alert('Semua field wajib diisi!');
+        const product = dataStore.products.find(p => p.id === productId);
+        if (!product) return alert('Produk tidak ditemukan!');
+        if (product.stock < quantity) return alert('Stok tidak mencukupi!');
+        const total = product.price * quantity;
+        dataStore.transactions.push({ id: generateId('TRAN'), productId, quantity, total, paymentMethod, status: 'Belum Lunas' });
+        product.stock -= quantity;
+        displayTransactions();
+    }
+    function displayTransactions() {
+        document.getElementById('transactionList').innerHTML = dataStore.transactions.map(tran =>
+            `<div>${tran.id} - ${tran.productId} (Qty: ${tran.quantity}, Total: Rp${tran.total.toFixed(2)}, Metode: ${tran.paymentMethod}, Status: ${tran.status})</div>`).join('');
+        calculateTotalRevenue();
+    }
+    function populateTransactionProducts() {
+        const productSelect = document.getElementById('transactionProduct');
+        productSelect.innerHTML = '<option value="" disabled selected>Pilih Produk</option>';
+        dataStore.products.forEach(prod => productSelect.innerHTML += `<option value="${prod.id}">${prod.name} (Rp${prod.price})</option>`);
+    }
+
+    function calculateTotalRevenue() {
+        const totalRevenue = dataStore.transactions.reduce((sum, tran) => sum + tran.total, 0);
+        document.getElementById('totalRevenue').innerText = `Total Pendapatan: Rp${totalRevenue.toFixed(2)}`;
+    }
+
+    // Lunas dan Kembalian
+    function markAsPaid(transactionId) {
+        const transaction = dataStore.transactions.find(tran => tran.id === transactionId);
+        if (transaction) {
+            transaction.status = 'Lunas';
+            calculateTotalRevenue();
+        }
+    }
+
+    function calculateChange(transactionId) {
+        const transaction = dataStore.transactions.find(tran => tran.id === transactionId);
+        if (transaction && transaction.status === 'Lunas') {
+            const paymentMethod = transaction.paymentMethod;
+            let change = 0;
+            if (paymentMethod === 'cash') {
+                const cashPaid = parseFloat(prompt('Masukkan jumlah uang yang dibayarkan:'));
+                if (cashPaid < transaction.total) return alert('Uang yang dibayarkan kurang!');
+                change = cashPaid - transaction.total;
+                alert(`Kembalian: Rp${change.toFixed(2)}`);
+            }
+            return change;
+        }
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

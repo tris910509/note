@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,337 +7,241 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
         }
+
+        #app {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin-top: 20px;
         }
+
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #ddd;
         }
+
         th, td {
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
-        .hidden {
-            display: none;
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            padding: 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(100% - 20px);
         }
     </style>
 </head>
 <body>
-    <h1>Aplikasi Kasir</h1>
-    <div>
-        <button onclick="showSection('usersSection')">Kelola Pengguna</button>
-        <button onclick="showSection('categoriesSection')">Kelola Kategori</button>
-        <button onclick="showSection('suppliersSection')">Kelola Supplier</button>
-        <button onclick="showSection('productsSection')">Kelola Produk</button>
-        <button onclick="showSection('transactionsSection')">Kelola Transaksi</button>
-        <button onclick="showSection('reportsSection')">Lihat Laporan</button>
-    </div>
-
-    <!-- Pengguna Section -->
-    <div id="usersSection" class="hidden">
-        <h2>Kelola Pengguna</h2>
-        <form id="userForm">
-            <input type="text" id="username" placeholder="Nama Pengguna" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="button" onclick="addUser()">Tambah Pengguna</button>
-        </form>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nama Pengguna</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="userTable"></tbody>
-        </table>
-    </div>
-
-    <!-- Kategori Section -->
-    <div id="categoriesSection" class="hidden">
-        <h2>Kelola Kategori</h2>
-        <form id="categoryForm">
-            <input type="text" id="categoryName" placeholder="Nama Kategori" required>
-            <button type="button" onclick="addCategory()">Tambah Kategori</button>
-        </form>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nama Kategori</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="categoryTable"></tbody>
-        </table>
-    </div>
-
-    <!-- Supplier Section -->
-    <div id="suppliersSection" class="hidden">
-        <h2>Kelola Supplier</h2>
-        <form id="supplierForm">
-            <input type="text" id="supplierName" placeholder="Nama Supplier" required>
-            <input type="text" id="supplierCompany" placeholder="Nama Perusahaan" required>
-            <input type="text" id="supplierPhone" placeholder="No. Telepon" required>
-            <input type="text" id="supplierAddress" placeholder="Alamat" required>
-            <button type="button" onclick="addSupplier()">Tambah Supplier</button>
-        </form>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nama Supplier</th>
-                    <th>Perusahaan</th>
-                    <th>No. Telepon</th>
-                    <th>Alamat</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="supplierTable"></tbody>
-        </table>
-    </div>
-
-    <!-- Produk Section -->
-    <div id="productsSection" class="hidden">
-        <h2>Kelola Produk</h2>
-        <form id="productForm">
-            <input type="text" id="productName" placeholder="Nama Produk" required>
-            <input type="number" id="productPrice" placeholder="Harga" required>
-            <input type="number" id="productStock" placeholder="Stok" required>
-            <select id="productCategory" required>
-                <option value="" disabled selected>Pilih Kategori</option>
-            </select>
-            <select id="productSupplier" required>
-                <option value="" disabled selected>Pilih Supplier</option>
-            </select>
-            <button type="button" onclick="addProduct()">Tambah Produk</button>
-        </form>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nama Produk</th>
-                    <th>Harga</th>
-                    <th>Stok</th>
-                    <th>Kategori</th>
-                    <th>Supplier</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="productTable"></tbody>
-        </table>
-    </div>
-
-    <!-- Transaksi Section -->
-    <div id="transactionsSection" class="hidden">
-        <h2>Kelola Transaksi</h2>
-        <form id="transactionForm">
-            <select id="transactionProduct" required>
-                <option value="" disabled selected>Pilih Produk</option>
-            </select>
-            <input type="number" id="transactionQuantity" placeholder="Jumlah" required>
-            <select id="transactionPaymentMethod" required>
-                <option value="" disabled selected>Metode Pembayaran</option>
-                <option value="Cash">Cash</option>
-                <option value="Transfer">Transfer</option>
-            </select>
-            <button type="button" onclick="addTransaction()">Tambah Transaksi</button>
-        </form>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Produk</th>
-                    <th>Jumlah</th>
-                    <th>Total</th>
-                    <th>Metode Pembayaran</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="transactionTable"></tbody>
-        </table>
-    </div>
-
-    <!-- Laporan Section -->
-    <div id="reportsSection" class="hidden">
-        <h2>Laporan</h2>
-        <button onclick="exportReport()">Export Laporan</button>
-        <div id="reportContent"></div>
+    <div id="app">
+        <h1>Aplikasi Kasir Lengkap</h1>
+        <nav>
+            <button onclick="navigate('pelanggan')">Pelanggan</button>
+            <button onclick="navigate('produk')">Produk</button>
+            <button onclick="navigate('kategori')">Kategori</button>
+            <button onclick="navigate('supplier')">Supplier</button>
+            <button onclick="navigate('transaksi')">Transaksi</button>
+            <button onclick="navigate('laporan')">Laporan</button>
+        </nav>
+        <div id="content"></div>
     </div>
 
     <script>
-        const data = {
-            users: [],
-            categories: [],
-            suppliers: [],
-            products: [],
-            transactions: []
-        };
-
-        function generateId(prefix) {
-            return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
+        // Helpers for LocalStorage
+        function saveToLocalStorage(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
         }
 
-        function showSection(sectionId) {
-            document.querySelectorAll('div[id$="Section"]').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
+        function getFromLocalStorage(key) {
+            return JSON.parse(localStorage.getItem(key)) || [];
         }
 
-        function renderTable(dataArray, tableId, rowCallback) {
-            const tableBody = document.getElementById(tableId);
-            tableBody.innerHTML = dataArray.map(rowCallback).join('');
+        // Navigation
+        function navigate(page) {
+            const content = document.getElementById("content");
+            switch (page) {
+                case 'pelanggan': showPelanggan(content); break;
+                case 'produk': showProduk(content); break;
+                case 'kategori': showKategori(content); break;
+                case 'supplier': showSupplier(content); break;
+                case 'transaksi': showTransaksi(content); break;
+                case 'laporan': showLaporan(content); break;
+                default: content.innerHTML = "<p>Halaman tidak ditemukan</p>";
+            }
         }
 
-        // Add user
-        function addUser() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            if (!username || !password) return alert('Semua field wajib diisi!');
-            data.users.push({ id: generateId('USER'), username, password });
-            renderTable(data.users, 'userTable', user =>
-                `<tr><td>${user.id}</td><td>${user.username}</td><td><button onclick="deleteUser('${user.id}')">Hapus</button></td></tr>`);
+        // CRUD Pelanggan
+        function showPelanggan(container) {
+            const pelanggan = getFromLocalStorage("pelanggan");
+            container.innerHTML = `
+                <h2>Pelanggan</h2>
+                <form onsubmit="addPelanggan(event)">
+                    <input type="text" id="namaPelanggan" placeholder="Nama Pelanggan" required>
+                    <button type="submit">Tambah</button>
+                </form>
+                <table>
+                    <thead>
+                        <tr><th>Nama Pelanggan</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody>
+                        ${pelanggan.map((p, i) => `
+                            <tr>
+                                <td>${p}</td>
+                                <td><button onclick="deletePelanggan(${i})">Hapus</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
         }
 
-        function deleteUser(userId) {
-            data.users = data.users.filter(user => user.id !== userId);
-            renderTable(data.users, 'userTable', user =>
-                `<tr><td>${user.id}</td><td>${user.username}</td><td><button onclick="deleteUser('${user.id}')">Hapus</button></td></tr>`);
+        function addPelanggan(event) {
+            event.preventDefault();
+            const nama = document.getElementById("namaPelanggan").value;
+            const pelanggan = getFromLocalStorage("pelanggan");
+            pelanggan.push(nama);
+            saveToLocalStorage("pelanggan", pelanggan);
+            navigate('pelanggan');
         }
 
-        // Add category
-        function addCategory() {
-            const categoryName = document.getElementById('categoryName').value.trim();
-            if (!categoryName) return alert('Nama kategori wajib diisi!');
-            data.categories.push({ id: generateId('CAT'), name: categoryName });
-            renderTable(data.categories, 'categoryTable', category =>
-                `<tr><td>${category.id}</td><td>${category.name}</td><td><button onclick="deleteCategory('${category.id}')">Hapus</button></td></tr>`);
-            updateCategoryDropdown();
+        function deletePelanggan(index) {
+            const pelanggan = getFromLocalStorage("pelanggan");
+            pelanggan.splice(index, 1);
+            saveToLocalStorage("pelanggan", pelanggan);
+            navigate('pelanggan');
         }
 
-        function deleteCategory(categoryId) {
-            data.categories = data.categories.filter(category => category.id !== categoryId);
-            renderTable(data.categories, 'categoryTable', category =>
-                `<tr><td>${category.id}</td><td>${category.name}</td><td><button onclick="deleteCategory('${category.id}')">Hapus</button></td></tr>`);
-            updateCategoryDropdown();
+        // CRUD Produk
+        function showProduk(container) {
+            const produk = getFromLocalStorage("produk");
+            const kategori = getFromLocalStorage("kategori");
+            container.innerHTML = `
+                <h2>Produk</h2>
+                <form onsubmit="addProduk(event)">
+                    <input type="text" id="namaProduk" placeholder="Nama Produk" required>
+                    <input type="number" id="hargaProduk" placeholder="Harga" required>
+                    <select id="kategoriProduk" required>
+                        <option value="">Pilih Kategori</option>
+                        ${kategori.map(k => `<option value="${k}">${k}</option>`).join('')}
+                    </select>
+                    <button type="submit">Tambah</button>
+                </form>
+                <table>
+                    <thead>
+                        <tr><th>Nama Produk</th><th>Harga</th><th>Kategori</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody>
+                        ${produk.map((p, i) => `
+                            <tr>
+                                <td>${p.nama}</td>
+                                <td>${p.harga}</td>
+                                <td>${p.kategori}</td>
+                                <td><button onclick="deleteProduk(${i})">Hapus</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
         }
 
-        // Add supplier
-        function addSupplier() {
-            const supplierName = document.getElementById('supplierName').value.trim();
-            const supplierCompany = document.getElementById('supplierCompany').value.trim();
-            const supplierPhone = document.getElementById('supplierPhone').value.trim();
-            const supplierAddress = document.getElementById('supplierAddress').value.trim();
-            if (!supplierName || !supplierCompany || !supplierPhone || !supplierAddress)
-                return alert('Semua field wajib diisi!');
-            data.suppliers.push({ id: generateId('SUP'), name: supplierName, company: supplierCompany, phone: supplierPhone, address: supplierAddress });
-            renderTable(data.suppliers, 'supplierTable', supplier =>
-                `<tr><td>${supplier.id}</td><td>${supplier.name}</td><td>${supplier.company}</td><td>${supplier.phone}</td><td>${supplier.address}</td><td><button onclick="deleteSupplier('${supplier.id}')">Hapus</button></td></tr>`);
-            updateSupplierDropdown();
+        function addProduk(event) {
+            event.preventDefault();
+            const nama = document.getElementById("namaProduk").value;
+            const harga = document.getElementById("hargaProduk").value;
+            const kategori = document.getElementById("kategoriProduk").value;
+            const produk = getFromLocalStorage("produk");
+            produk.push({ nama, harga, kategori });
+            saveToLocalStorage("produk", produk);
+            navigate('produk');
         }
 
-        function deleteSupplier(supplierId) {
-            data.suppliers = data.suppliers.filter(supplier => supplier.id !== supplierId);
-            renderTable(data.suppliers, 'supplierTable', supplier =>
-                `<tr><td>${supplier.id}</td><td>${supplier.name}</td><td>${supplier.company}</td><td>${supplier.phone}</td><td>${supplier.address}</td><td><button onclick="deleteSupplier('${supplier.id}')">Hapus</button></td></tr>`);
-            updateSupplierDropdown();
+        function deleteProduk(index) {
+            const produk = getFromLocalStorage("produk");
+            produk.splice(index, 1);
+            saveToLocalStorage("produk", produk);
+            navigate('produk');
         }
 
-        // Update dropdowns
-        function updateCategoryDropdown() {
-            const categorySelect = document.getElementById('productCategory');
-            categorySelect.innerHTML = '<option value="" disabled selected>Pilih Kategori</option>' + data.categories.map(category =>
-                `<option value="${category.id}">${category.name}</option>`).join('');
+        // CRUD Kategori
+        function showKategori(container) {
+            const kategori = getFromLocalStorage("kategori");
+            container.innerHTML = `
+                <h2>Kategori</h2>
+                <form onsubmit="addKategori(event)">
+                    <input type="text" id="namaKategori" placeholder="Nama Kategori" required>
+                    <button type="submit">Tambah</button>
+                </form>
+                <table>
+                    <thead>
+                        <tr><th>Nama Kategori</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody>
+                        ${kategori.map((k, i) => `
+                            <tr>
+                                <td>${k}</td>
+                                <td><button onclick="deleteKategori(${i})">Hapus</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
         }
 
-        function updateSupplierDropdown() {
-            const supplierSelect = document.getElementById('productSupplier');
-            supplierSelect.innerHTML = '<option value="" disabled selected>Pilih Supplier</option>' + data.suppliers.map(supplier =>
-                `<option value="${supplier.id}">${supplier.name}</option>`).join('');
+        function addKategori(event) {
+            event.preventDefault();
+            const nama = document.getElementById("namaKategori").value;
+            const kategori = getFromLocalStorage("kategori");
+            kategori.push(nama);
+            saveToLocalStorage("kategori", kategori);
+            navigate('kategori');
         }
 
-        function updateProductDropdown() {
-            const productSelect = document.getElementById('transactionProduct');
-            productSelect.innerHTML = '<option value="" disabled selected>Pilih Produk</option>' + data.products.map(product =>
-                `<option value="${product.id}">${product.name}</option>`).join('');
+        function deleteKategori(index) {
+            const kategori = getFromLocalStorage("kategori");
+            kategori.splice(index, 1);
+            saveToLocalStorage("kategori", kategori);
+            navigate('kategori');
         }
 
-        // Add product
-        function addProduct() {
-            const productName = document.getElementById('productName').value.trim();
-            const productPrice = parseFloat(document.getElementById('productPrice').value);
-            const productStock = parseInt(document.getElementById('productStock').value);
-            const productCategory = document.getElementById('productCategory').value;
-            const productSupplier = document.getElementById('productSupplier').value;
-            if (!productName || isNaN(productPrice) || isNaN(productStock) || !productCategory || !productSupplier)
-                return alert('Semua field wajib diisi!');
-            data.products.push({
-                id: generateId('PROD'),
-                name: productName,
-                price: productPrice,
-                stock: productStock,
-                categoryId: productCategory,
-                supplierId: productSupplier
-            });
-            renderTable(data.products, 'productTable', product =>
-                `<tr><td>${product.id}</td><td>${product.name}</td><td>${product.price}</td><td>${product.stock}</td><td>${product.categoryId}</td><td>${product.supplierId}</td><td><button onclick="deleteProduct('${product.id}')">Hapus</button></td></tr>`);
-            updateProductDropdown();
-        }
-
-        function deleteProduct(productId) {
-            data.products = data.products.filter(product => product.id !== productId);
-            renderTable(data.products, 'productTable', product =>
-                `<tr><td>${product.id}</td><td>${product.name}</td><td>${product.price}</td><td>${product.stock}</td><td>${product.categoryId}</td><td>${product.supplierId}</td><td><button onclick="deleteProduct('${product.id}')">Hapus</button></td></tr>`);
-            updateProductDropdown();
-        }
-
-        // Add transaction
-        function addTransaction() {
-            const transactionProduct = document.getElementById('transactionProduct').value;
-            const transactionQuantity = parseInt(document.getElementById('transactionQuantity').value);
-            const transactionPaymentMethod = document.getElementById('transactionPaymentMethod').value;
-            if (!transactionProduct || isNaN(transactionQuantity) || !transactionPaymentMethod)
-                return alert('Semua field wajib diisi!');
-            const product = data.products.find(p => p.id === transactionProduct);
-            if (!product || product.stock < transactionQuantity)
-                return alert('Stok tidak mencukupi!');
-            const total = product.price * transactionQuantity;
-            product.stock -= transactionQuantity;
-            data.transactions.push({
-                id: generateId('TRAN'),
-                productId: transactionProduct,
-                quantity: transactionQuantity,
-                total,
-                paymentMethod: transactionPaymentMethod,
-                status: 'Lunas'
-            });
-            renderTable(data.transactions, 'transactionTable', transaction =>
-                `<tr><td>${transaction.id}</td><td>${transaction.productId}</td><td>${transaction.quantity}</td><td>${transaction.total}</td><td>${transaction.paymentMethod}</td><td>${transaction.status}</td><td><button onclick="deleteTransaction('${transaction.id}')">Hapus</button></td></tr>`);
-        }
-
-        function deleteTransaction(transactionId) {
-            data.transactions = data.transactions.filter(transaction => transaction.id !== transactionId);
-            renderTable(data.transactions, 'transactionTable', transaction =>
-                `<tr><td>${transaction.id}</td><td>${transaction.productId}</td><td>${transaction.quantity}</td><td>${transaction.total}</td><td>${transaction.paymentMethod}</td><td>${transaction.status}</td><td><button onclick="deleteTransaction('${transaction.id}')">Hapus</button></td></tr>`);
-        }
-
-        // Export report
-        function exportReport() {
-            const reportContent = data.transactions.map(transaction =>
-                `${transaction.id},${transaction.productId},${transaction.quantity},${transaction.total},${transaction.paymentMethod},${transaction.status}`).join('\n');
-            const blob = new Blob([reportContent], { type: 'text/csv' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'transactions.csv';
-            link.click();
-            URL.revokeObjectURL(link.href);
-        }
+        // Load default page
+        navigate('pelanggan');
     </script>
 </body>
 </html>
